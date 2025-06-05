@@ -1,0 +1,17 @@
+[project]
+name = "loglass-server"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "cooler>=0.10.3",
+    "fastapi>=0.115.12",
+]
+
+[dependency-groups]
+dev = [
+    "mypy>=1.16.0",
+    "pytest>=8.4.0",
+    "ruff>=0.11.12",
+]
