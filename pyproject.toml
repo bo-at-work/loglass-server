@@ -19,3 +19,4 @@ dev = [
 
 [tool.ruff]
 line-length = 120
+exclude=["old_reference_impl",".venv"]

@@ -61,15 +61,10 @@ class TilesetInfoResponse(BaseModel):
 
 # For Cooler tiles, data is often a dense array of numbers or an object with structure
 class TileDataCooler(BaseModel):
-    # Simplified stub: a list of numbers or a generic dict.
-    # Actual structure can be complex (e.g., { "dense": "..." } or { "values": [...] })
-    # For now, let's assume the API returns the processed data directly for the tile.
-    values: List[float]  # Simplified stub
-    # Example structure from docs if needed later:
-    # min_value: Optional[float] = None
-    # max_value: Optional[float] = None
-    # dense: Optional[Union[str, List[float]]] = None # Can be base64 encoded string or list
-    # nan_values: Optional[bool] = False
+    dense: List[float]
+    min_value: Optional[float] = None
+    max_value: Optional[float] = None
+    # nan_values: Optional[bool] = False # Could be added if needed
 
 
 class TilesDataResponse(BaseModel):
