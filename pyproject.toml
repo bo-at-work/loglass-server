@@ -3,7 +3,7 @@ name = "loglass-server"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = ">=3.12"
 dependencies = [
     "cooler>=0.10.3",
     "fastapi[standard]>=0.115.12",
