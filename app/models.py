@@ -61,15 +61,10 @@ class TilesetInfoResponse(BaseModel):
 
 # For Cooler tiles, data is often a dense array of numbers or an object with structure
 class TileDataCooler(BaseModel):
-    # Simplified stub: a list of numbers or a generic dict.
-    # Actual structure can be complex (e.g., { "dense": "..." } or { "values": [...] })
-    # For now, let's assume the API returns the processed data directly for the tile.
-    values: List[float]  # Simplified stub
-    # Example structure from docs if needed later:
-    # min_value: Optional[float] = None
-    # max_value: Optional[float] = None
-    # dense: Optional[Union[str, List[float]]] = None # Can be base64 encoded string or list
-    # nan_values: Optional[bool] = False
+    dense: List[float]
+    min_value: Optional[float] = None
+    max_value: Optional[float] = None
+    # nan_values: Optional[bool] = False # Could be added if needed
 
 
 class TilesDataResponse(BaseModel):
@@ -77,3 +72,31 @@ class TilesDataResponse(BaseModel):
     # The value can be the specific tile data model or an ErrorModel
     # Using a direct Dict field for simplicity with FastAPI response_model
     data: Dict[str, Union[TileDataCooler, ErrorModel]]
+
+
+class ChromSizeEntry(BaseModel):
+    """Single chromosome size entry"""
+
+    name: str
+    size: int
+
+
+class ChromSizesResponse(BaseModel):
+    """Response for chromosome sizes API"""
+
+    chromsizes: List[List[Union[str, int]]]  # Format: [["chr1", 249250621], ["chr2", 243199373], ...]
+
+
+class ChromSizesTSVResponse(BaseModel):
+    """TSV format response for chromosome sizes"""
+
+    content: str  # Tab-separated content
+
+
+class AvailableChromSizesResponse(BaseModel):
+    """Response for available chromosome sizes datasets"""
+
+    count: int
+    next: Optional[str] = None
+    previous: Optional[str] = None
+    results: List[TilesetPublic]

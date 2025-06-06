@@ -3,7 +3,7 @@ name = "loglass-server"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = ">=3.12"
 dependencies = [
     "cooler>=0.10.3",
     "fastapi[standard]>=0.115.12",
@@ -14,8 +14,15 @@ dev = [
     "mypy>=1.16.0",
     "pre-commit>=4.2.0",
     "pytest>=8.4.0",
+    "pytest-cov>=6.0.0",
+    "pytest-mock>=3.14.0",
     "ruff>=0.11.12",
 ]
 
 [tool.ruff]
 line-length = 120
+exclude=["old_reference_impl",".venv"]
+
+[tool.pytest.ini_options]
+addopts = "-ra -q -s -v -x"
+pythonpath = ['.', 'tests']

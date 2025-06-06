@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from app.routers import tilesets
+from app.routers import chromsizes, tilesets
 
 app = FastAPI(
     title="Loglass FastAPI Clone",
@@ -9,6 +9,7 @@ app = FastAPI(
 )
 
 app.include_router(tilesets.router)
+app.include_router(chromsizes.router)
 
 
 @app.get("/", tags=["root"])
