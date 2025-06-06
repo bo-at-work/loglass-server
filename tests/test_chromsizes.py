@@ -1,9 +1,10 @@
-import pytest
-from fastapi.testclient import TestClient
 from unittest.mock import AsyncMock
 
+import pytest
+from fastapi.testclient import TestClient
+
 from app.main import app
-from app.models import TilesetPublic, TilesetInfoCooler
+from app.models import TilesetInfoCooler, TilesetPublic
 from app.services.tileset_repository import StubTilesetRepository
 
 
@@ -29,7 +30,7 @@ def sample_tileset():
         name="Test Human (hg19) Chromosome Sizes",
         coordSystem="hg19",
         owner="test_user",
-        description="Test chromosome sizes for hg19"
+        description="Test chromosome sizes for hg19",
     )
 
 
@@ -51,7 +52,7 @@ def sample_tileset_info():
             ["chr3", 198022430],
             ["chrX", 155270560],
             ["chrY", 59373566],
-        ]
+        ],
     )
 
 
@@ -66,6 +67,7 @@ class TestChromSizesEndpoint:
 
         # Override the dependency
         from app.routers import chromsizes
+
         app.dependency_overrides[chromsizes.get_repository] = lambda: mock_repo
 
         try:
@@ -92,6 +94,7 @@ class TestChromSizesEndpoint:
         mock_repo.get_tileset_info.return_value = sample_tileset_info
 
         from app.routers import chromsizes
+
         app.dependency_overrides[chromsizes.get_repository] = lambda: mock_repo
 
         try:
@@ -115,6 +118,7 @@ class TestChromSizesEndpoint:
         mock_repo.get_tilesets_by_coord_system.return_value = []
 
         from app.routers import chromsizes
+
         app.dependency_overrides[chromsizes.get_repository] = lambda: mock_repo
 
         try:
@@ -136,6 +140,7 @@ class TestChromSizesEndpoint:
         mock_repo.get_tilesets_by_coord_system.return_value = []
 
         from app.routers import chromsizes
+
         app.dependency_overrides[chromsizes.get_repository] = lambda: mock_repo
 
         try:
@@ -144,7 +149,7 @@ class TestChromSizesEndpoint:
             assert response.status_code == 200
             assert response.headers["content-type"] == "text/tab-separated-values; charset=utf-8"
 
-            lines = response.text.strip().split('\n')
+            lines = response.text.strip().split("\n")
             assert len(lines) == 25
             assert lines[0] == "chr1\t249250621"
             assert lines[1] == "chr2\t243199373"
@@ -158,6 +163,7 @@ class TestChromSizesEndpoint:
         mock_repo.get_tilesets_by_coord_system.return_value = []
 
         from app.routers import chromsizes
+
         app.dependency_overrides[chromsizes.get_repository] = lambda: mock_repo
 
         try:
@@ -183,6 +189,7 @@ class TestChromSizesEndpoint:
         mock_repo.get_tilesets_by_coord_system.return_value = []
 
         from app.routers import chromsizes
+
         app.dependency_overrides[chromsizes.get_repository] = lambda: mock_repo
 
         try:
@@ -202,6 +209,7 @@ class TestChromSizesEndpoint:
         mock_repo.get_tileset_info.return_value = None
 
         from app.routers import chromsizes
+
         app.dependency_overrides[chromsizes.get_repository] = lambda: mock_repo
 
         try:
@@ -228,11 +236,12 @@ class TestChromSizesEndpoint:
             max_pos=[1000],
             max_zoom=0,
             tile_size=1,
-            chromsizes=[]  # Empty chromsizes
+            chromsizes=[],  # Empty chromsizes
         )
         mock_repo.get_tileset_info.return_value = empty_tileset_info
 
         from app.routers import chromsizes
+
         app.dependency_overrides[chromsizes.get_repository] = lambda: mock_repo
 
         try:
@@ -258,7 +267,7 @@ class TestAvailableChromSizesEndpoint:
                 datatype="chromsizes",
                 name="Human (hg19) Chromosome Sizes",
                 coordSystem="hg19",
-                owner="admin"
+                owner="admin",
             ),
             TilesetPublic(
                 uuid="hg38_chromsizes",
@@ -266,14 +275,15 @@ class TestAvailableChromSizesEndpoint:
                 datatype="chromsizes",
                 name="Human (hg38) Chromosome Sizes",
                 coordSystem="hg38",
-                owner="admin"
-            )
+                owner="admin",
+            ),
         ]
 
         mock_repo = AsyncMock()
         mock_repo.list_tilesets.return_value = (sample_tilesets, 2)
 
         from app.routers import chromsizes
+
         app.dependency_overrides[chromsizes.get_repository] = lambda: mock_repo
 
         try:
@@ -289,11 +299,7 @@ class TestAvailableChromSizesEndpoint:
             assert data["results"][0]["datatype"] == "chromsizes"
             assert data["results"][1]["uuid"] == "hg38_chromsizes"
 
-            mock_repo.list_tilesets.assert_called_once_with(
-                datatype=["chromsizes"],
-                page=1,
-                page_size=10
-            )
+            mock_repo.list_tilesets.assert_called_once_with(datatype=["chromsizes"], page=1, page_size=10)
         finally:
             app.dependency_overrides.clear()
 
@@ -303,6 +309,7 @@ class TestAvailableChromSizesEndpoint:
         mock_repo.list_tilesets.return_value = ([], 0)
 
         from app.routers import chromsizes
+
         app.dependency_overrides[chromsizes.get_repository] = lambda: mock_repo
 
         try:
@@ -313,11 +320,7 @@ class TestAvailableChromSizesEndpoint:
             assert data["count"] == 0
             assert len(data["results"]) == 0
 
-            mock_repo.list_tilesets.assert_called_once_with(
-                datatype=["chromsizes"],
-                page=2,
-                page_size=5
-            )
+            mock_repo.list_tilesets.assert_called_once_with(datatype=["chromsizes"], page=2, page_size=5)
         finally:
             app.dependency_overrides.clear()
 
@@ -327,6 +330,7 @@ class TestAvailableChromSizesEndpoint:
         mock_repo.list_tilesets.return_value = ([], 0)
 
         from app.routers import chromsizes
+
         app.dependency_overrides[chromsizes.get_repository] = lambda: mock_repo
 
         try:

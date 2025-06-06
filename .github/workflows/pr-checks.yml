@@ -1,0 +1,125 @@
+name: PR Checks
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      python: ${{ steps.changes.outputs.python }}
+      docs: ${{ steps.changes.outputs.docs }}
+      config: ${{ steps.changes.outputs.config }}
+    steps:
+    - uses: actions/checkout@v4
+    - uses: dorny/paths-filter@v2
+      id: changes
+      with:
+        filters: |
+          python:
+            - '**/*.py'
+            - 'pyproject.toml'
+            - 'uv.lock'
+          docs:
+            - 'docs/**'
+            - '**/*.md'
+          config:
+            - '.github/**'
+            - '.pre-commit-config.yaml'
+            - 'Dockerfile'
+
+  test-changes:
+    needs: changes
+    if: ${{ needs.changes.outputs.python == 'true' }}
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@v4
+      with:
+        version: "latest"
+
+    - name: Set up Python
+      run: uv python install 3.12
+
+    - name: Install dependencies
+      run: |
+        uv sync --dev
+
+    - name: Run affected tests
+      run: |
+        # Run all tests for now, could be optimized to run only affected tests
+        uv run pytest tests/ -v --tb=short
+
+    - name: Check test coverage
+      run: |
+        uv run pytest tests/ --cov=app --cov-fail-under=80 --cov-report=term-missing
+
+  lint-changes:
+    needs: changes
+    if: ${{ needs.changes.outputs.python == 'true' || needs.changes.outputs.config == 'true' }}
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@v4
+      with:
+        version: "latest"
+
+    - name: Set up Python
+      run: uv python install 3.12
+
+    - name: Install dependencies
+      run: |
+        uv sync --dev
+
+    - name: Run pre-commit on changed files
+      run: |
+        uv run pre-commit run --from-ref origin/${{ github.base_ref }} --to-ref HEAD
+
+  docs-changes:
+    needs: changes
+    if: ${{ needs.changes.outputs.docs == 'true' }}
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Check markdown links
+      uses: gaurav-nelson/github-action-markdown-link-check@v1
+      with:
+        use-quiet-mode: 'yes'
+        use-verbose-mode: 'yes'
+        config-file: '.github/mlc_config.json'
+
+    - name: Lint markdown files
+      run: |
+        npm install -g markdownlint-cli
+        markdownlint docs/ README.md || true
+
+  security-check:
+    needs: changes
+    if: ${{ needs.changes.outputs.python == 'true' }}
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Run Trivy vulnerability scanner
+      uses: aquasecurity/trivy-action@master
+      with:
+        scan-type: 'fs'
+        scan-ref: '.'
+        format: 'sarif'
+        output: 'trivy-results.sarif'
+
+    - name: Upload Trivy scan results to GitHub Security tab
+      uses: github/codeql-action/upload-sarif@v2
+      if: always()
+      with:
+        sarif_file: 'trivy-results.sarif'

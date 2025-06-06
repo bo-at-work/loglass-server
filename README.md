@@ -15,8 +15,8 @@ A FastAPI-based partial clone of the HiGlass Server API, focusing on tileset rou
 3.  **Install dependencies (using Poetry):**
     It's recommended to use Poetry for managing dependencies.
     ```bash
-    pip install poetry
-    poetry install
+    pip install uv
+    uv sync --dev
     ```
     Alternatively, if not using Poetry, ensure `fastapi`, `uvicorn[standard]`, and `pydantic` are installed via pip from the `pyproject.toml` specifications.
 
@@ -24,10 +24,10 @@ A FastAPI-based partial clone of the HiGlass Server API, focusing on tileset rou
 
 Using Poetry:
 ```bash
-poetry run uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+uv run uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
-Or, if not using Poetry (ensure virtual environment is active):
+Or, if not using uv (ensure virtual environment is active):
 ```bash
 uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
