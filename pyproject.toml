@@ -22,3 +22,7 @@ dev = [
 [tool.ruff]
 line-length = 120
 exclude=["old_reference_impl",".venv"]
+
+[tool.pytest.ini_options]
+addopts = "-ra -q -s -v -x"
+pythonpath = ['.', 'tests']
