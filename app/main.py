@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from app.routers import tilesets, chromsizes
+from app.routers import chromsizes, tilesets
 
 app = FastAPI(
     title="Loglass FastAPI Clone",

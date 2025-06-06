@@ -76,22 +76,26 @@ class TilesDataResponse(BaseModel):
 
 class ChromSizeEntry(BaseModel):
     """Single chromosome size entry"""
+
     name: str
     size: int
 
 
 class ChromSizesResponse(BaseModel):
     """Response for chromosome sizes API"""
+
     chromsizes: List[List[Union[str, int]]]  # Format: [["chr1", 249250621], ["chr2", 243199373], ...]
 
 
 class ChromSizesTSVResponse(BaseModel):
     """TSV format response for chromosome sizes"""
+
     content: str  # Tab-separated content
 
 
 class AvailableChromSizesResponse(BaseModel):
     """Response for available chromosome sizes datasets"""
+
     count: int
     next: Optional[str] = None
     previous: Optional[str] = None
